@@ -24,7 +24,6 @@ export default function RootLayout() {
   }, []);
 
   return (
-    // <KeyboardProvider>
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack>
@@ -42,6 +41,5 @@ export default function RootLayout() {
         </Stack>
       </ThemeProvider>
     </QueryClientProvider>
-    // </KeyboardProvider>
   );
 }

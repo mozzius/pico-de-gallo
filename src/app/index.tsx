@@ -1,20 +1,11 @@
-import { useHeaderHeight } from "@react-navigation/elements";
 import { useTheme } from "@react-navigation/native";
 import { usePicoPosts } from "#/lib/api";
 import { PostRecord } from "#/lib/types";
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Suspense, useCallback, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   InputAccessoryView,
-  KeyboardAvoidingView,
   ListRenderItemInfo,
   StyleSheet,
   Text,
@@ -23,14 +14,11 @@ import {
 } from "react-native";
 import {
   KeyboardState,
-  runOnJS,
   scrollTo,
   useAnimatedKeyboard,
   useAnimatedReaction,
   useAnimatedRef,
-  useScrollViewOffset,
 } from "react-native-reanimated";
-// import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
@@ -52,8 +40,6 @@ export default function HomeScreen() {
 
 function Feed() {
   const { posts, fetchNextPage, hasNextPage } = usePicoPosts();
-  const insets = useSafeAreaInsets();
-  const headerHeight = useHeaderHeight();
   const aRef = useAnimatedRef<FlatList>();
 
   const postPairs = useMemo(() => {
@@ -88,10 +74,10 @@ function Feed() {
   useAnimatedReaction(
     () => keyboard.height.value,
     (height, prevHeight) => {
-      const isMounting = keyboard.state.value === KeyboardState.UNKNOWN
-      const isOpening = keyboard.state.value === KeyboardState.OPENING
+      const isMounting = keyboard.state.value === KeyboardState.UNKNOWN;
+      const isOpening = keyboard.state.value === KeyboardState.OPENING;
       if (isMounting || (isOpening && (!prevHeight || height > prevHeight))) {
-        scrollTo(aRef, 0,  -height, true)
+        scrollTo(aRef, 0, -height, true);
       }
     },
   );
