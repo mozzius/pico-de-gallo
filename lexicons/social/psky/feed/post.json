@@ -1,0 +1,30 @@
+{
+  "lexicon": 1,
+  "id": "social.psky.feed.post",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A Picosky post containing at most 256 graphemes.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 2560,
+            "maxGraphemes": 256,
+            "description": "Text content."
+          },
+          "facets": {
+            "type": "array",
+            "description": "Annotations of text (mentions, URLs, hashtags, etc)",
+            "items": { "type": "ref", "ref": "social.psky.richtext.facet" }
+          }
+        }
+      }
+    }
+  }
+}

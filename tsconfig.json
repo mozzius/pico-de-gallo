@@ -2,16 +2,17 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "#/*": ["./src/*"]
     }
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ]
+    "expo-env.d.ts",
+    "nativewind-env.d.ts"
+, "src/lib/lexicon.mts"  ]
 }
