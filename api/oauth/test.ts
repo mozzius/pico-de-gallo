@@ -1,6 +1,6 @@
 const html = String.raw;
 
-export default function GET(request: Request) {
+export function GET(request: Request) {
   return new Response(
     html`
       <form action="/api/oauth/login" method="post">

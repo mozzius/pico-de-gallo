@@ -2,11 +2,9 @@ import { getIronSession } from "iron-session";
 import { Session } from "./_utils/types";
 
 export async function GET(request: Request) {
-  const response = new Response("👍", { status: 204 });
-  const session = await getIronSession<Session>(request, response, {
+  const session = await getIronSession<Session>(request, new Response(), {
     cookieName: "sid",
     password: process.env.COOKIE_SECRET!,
   });
-  session.destroy();
-  return response;
+  return Response.json({ did: session.did });
 }

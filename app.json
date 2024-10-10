@@ -27,9 +27,22 @@
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
-    "plugins": [["expo-router", { "origin": "https://pico.mozzius.dev" }]],
+    "plugins": [
+      [
+        "expo-router",
+        {
+          "origin": "https://pico.mozzius.dev"
+        }
+      ]
+    ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3111870e-0f8f-408e-967a-0540a1218c9b"
+      }
+    },
+    "owner": "mozzius"
   }
 }

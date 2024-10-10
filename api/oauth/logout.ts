@@ -1,5 +1,3 @@
-import { isValidHandle } from "@atproto/syntax";
-import { createClient } from "../_utils/client";
 import { getIronSession } from "iron-session";
 import { Session } from "../_utils/types";
 
@@ -10,5 +8,5 @@ export async function GET(request: Request) {
     password: process.env.COOKIE_SECRET!,
   });
   session.destroy();
-  return response
+  return response;
 }
