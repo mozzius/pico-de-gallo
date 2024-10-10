@@ -1,8 +1,6 @@
-
-export function GET() {
-  return new Response('hello world');
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+ 
+export default function (request: VercelRequest, response: VercelResponse) {
+  const { name = 'World' } = request.query;
+  response.send(`Hello ${name}!`);
 }
-
-export const config = {
-  runtime: 'nodejs',
-};
