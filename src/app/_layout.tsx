@@ -8,10 +8,11 @@ import { useColorScheme } from "#/lib/useColorScheme";
 import { ResponseType, useAuthRequest } from "expo-auth-session";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "react-native-reanimated";
 import "#/global.css";
-import { Button } from "react-native";
+import * as SecureStore from "expo-secure-store";
+import { Alert, Button } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -20,21 +21,58 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [request, result, prompt] = useAuthRequest({
-    clientId: "https://pico.mozzius.dev/client-metadata.json",
-    redirectUri: "picodegallo:///",
-    scopes: ["atproto", "transition:generic"],
-    usePKCE: true,
-    responseType: ResponseType.Code,
-  }, null)
+  const [token, setToken] = useState<string | null | undefined>();
+  const [request, result, promptAsync] = useAuthRequest(
+    {
+      clientId: "https://pico.mozzius.dev/client-metadata.json",
+      redirectUri: "picodegallo:///",
+      scopes: ["atproto", "transition:generic"],
+      usePKCE: true,
+      responseType: ResponseType.Code,
+      extraParams: {
+        application_type: "native",
+        token_endpoint_auth_method: "none",
+        dpop_bound_access_tokens: 'false',
+      }
+    },
+    {
+      authorizationEndpoint: 'https://bsky.social/oauth/authorize',
+
+    },
+  );
 
   const headerLeft = useCallback(() => {
-    return <Button title="Log in" onPress={() => prompt()} />
-  }, [])
+    return <Button title="Log in" onPress={() => promptAsync()} />;
+  }, [promptAsync]);
 
   useEffect(() => {
-    SplashScreen.hideAsync();
+    SecureStore.getItemAsync("token").then(
+      (value) => setToken(value),
+      () => setToken(null),
+    );
   }, []);
+
+  useEffect(() => {
+    if (token !== undefined) {
+      SplashScreen.hideAsync();
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!result) return;
+    switch (result.type) {
+      case "success": {
+        console.log(result)
+      }
+      case "error": {
+        console.error(result.error, result.params);
+        Alert.alert("Failed to log in", result.error?.message);
+      }
+      default: {
+        console.log(result)
+      }
+    }
+  }, [result]);
 
   return (
     <QueryClientProvider client={queryClient}>
