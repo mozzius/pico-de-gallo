@@ -1,6 +1,8 @@
+import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "#/lib/auth";
 import { Stack, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { act, useCallback, useState } from "react";
+import { TextInput } from "react-native";
 import {
   Button,
   HStack,
@@ -13,11 +15,27 @@ import {
 } from "swiftui-react-native";
 
 export default function AuthScreen() {
-  const identifier = useBinding("");
-  const password = useBinding("");
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
   const router = useRouter();
-  const [error, setError] = useState(false);
   const { logIn } = useAuth();
+
+  const action = useMutation({
+    mutationFn: async () => {
+      if (!identifier || !password) {
+        throw new Error("Please enter a username and password");
+      }
+      const { success } = await logIn(identifier, password);
+      if (success) {
+        return true;
+      } else {
+        throw new Error("Incorrect username or password");
+      }
+    },
+    onSuccess: () => {
+      router.dismiss();
+    },
+  });
 
   const headerRight = useCallback(
     () => <Button title="Done" bold action={router.dismiss} />,
@@ -30,40 +48,28 @@ export default function AuthScreen() {
       <List>
         <Section
           header="Username & password"
-          footer={
-            error
-              ? "Incorrect username or password. Please try again."
-              : undefined
-          }
+          footer={action.error ? action.error.message : undefined}
         >
-          <TextField
-            text={identifier}
+          <TextInput
+            defaultValue={identifier}
+            onChangeText={setIdentifier}
             placeholder="Username"
-            textInputAutocapitalization="never"
-            autocorrectionDisabled
+            autoCapitalize="none"
+            autoCorrect={false}
             textContentType="username"
-            textFieldStyle="roundedBorder"
-            frame={{}}
+            className="flex-1 text-lg leading-5"
           />
-          <SecureField
-            text={password}
-            placeholder="App password"
-            textContentType="password"
+          <TextInput
+            defaultValue={password}
+            onChangeText={setPassword}
+            placeholder="Password"
+            secureTextEntry
+            className="flex-1 text-lg leading-5"
           />
         </Section>
         <Button
-          action={async () => {
-            setError(false);
-            if (!identifier.value || !password.value) {
-              return;
-            }
-            const { success } = await logIn(identifier.value, password.value);
-            if (success) {
-              router.dismiss();
-            } else {
-              setError(true);
-            }
-          }}
+          action={action.mutate}
+          disabled={action.isPending || !identifier || !password}
         >
           <HStack alignment="center">
             <Text bold>Sign in</Text>
