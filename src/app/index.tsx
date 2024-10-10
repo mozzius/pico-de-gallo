@@ -113,7 +113,6 @@ function Feed() {
       automaticallyAdjustKeyboardInsets
       automaticallyAdjustsScrollIndicatorInsets
       automaticallyAdjustContentInsets={false}
-      ListHeaderComponentClassName="h-4"
       // contentInset={{ top: headerHeight }}
     />
   );
