@@ -1,0 +1,9 @@
+{
+  "redirects": [
+    {
+      "source": "/client-metadata.json",
+      "destination": "/api/metadata",
+      "statusCode": 308
+    }
+  ]
+}

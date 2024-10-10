@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
  
 export default function (request: VercelRequest, response: VercelResponse) {
-  const { name = 'World' } = request.query;
-  response.send(`Hello ${name}!`);
+  if (request.method !== 'GET') {
+    response.status(405).send('Method Not Allowed');
+    return;
+  }
 }
