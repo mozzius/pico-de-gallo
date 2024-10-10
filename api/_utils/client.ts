@@ -2,7 +2,7 @@ import { NodeOAuthClient } from "@atproto/oauth-client-node";
 import { SessionStore, StateStore } from "./db";
 
 export const createClient = async () => {
-  const url = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://127.0.0.1:8081';
+  const url = 'https://pico.mozzius.dev'
   return new NodeOAuthClient({
     clientMetadata: {
       client_name: "Pico de Gallo",
