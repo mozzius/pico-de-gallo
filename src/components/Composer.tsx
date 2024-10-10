@@ -67,7 +67,6 @@ export function Composer() {
             className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-3xl
            px-4 py-2 text-base leading-5"
             placeholderClassName="text-gray-600 dark:text-gray-400"
-            returnKeyType="send"
             onSubmitEditing={handleSubmit}
             placeholder="Something to say?"
             multiline
