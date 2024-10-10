@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "picodegallo",
+    "name": "Pico de Gallo",
     "slug": "picodegallo",
+    "scheme": "picodegallo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "dev.mozzius.pico",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
