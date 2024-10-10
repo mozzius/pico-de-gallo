@@ -10,7 +10,7 @@ export const createClient = async () => {
         ? `${url}/client-metadata.json`
         : `http://localhost?redirect_uri=${encodeURIComponent(`${url}/api/oauth/callback`)}`,
       client_uri: url,
-      redirect_uris: [`${url}/api/oauth/callback`],
+      redirect_uris: ['picodegallo:///'],
       scope: "atproto transition:generic",
       grant_types: ["authorization_code", "refresh_token"],
       response_types: ["code"],

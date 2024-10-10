@@ -30,14 +30,14 @@ export default function RootLayout() {
       usePKCE: true,
       responseType: ResponseType.Code,
       extraParams: {
+        grant_types: "authorization_code,refresh_token",
         application_type: "native",
         token_endpoint_auth_method: "none",
-        dpop_bound_access_tokens: 'false',
-      }
+        dpop_bound_access_tokens: "true",
+      },
     },
     {
-      authorizationEndpoint: 'https://bsky.social/oauth/authorize',
-
+      authorizationEndpoint: "https://bsky.social/oauth/authorize",
     },
   );
 
@@ -62,14 +62,14 @@ export default function RootLayout() {
     if (!result) return;
     switch (result.type) {
       case "success": {
-        console.log(result)
+        console.log(result);
       }
       case "error": {
         console.error(result.error, result.params);
         Alert.alert("Failed to log in", result.error?.message);
       }
       default: {
-        console.log(result)
+        console.log(result);
       }
     }
   }, [result]);
