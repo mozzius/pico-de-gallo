@@ -1,15 +1,15 @@
-import { useTheme } from "@react-navigation/native";
+import { Composer } from "#/components/Composer";
 import { usePicoPosts } from "#/lib/api";
+import { useAuth } from "#/lib/auth";
 import { PostRecord } from "#/lib/types";
-import { Suspense, useCallback, useMemo, useRef, useState } from "react";
+import { type ErrorBoundaryProps } from "expo-router";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
+  Button,
   FlatList,
-  InputAccessoryView,
   ListRenderItemInfo,
-  StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import {
@@ -22,8 +22,22 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  const [showComposer, setShowComposer] = useState(false);
+  const { user } = useAuth();
+  const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setShowComposer(true);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
-    <View className="flex-1 bg-white dark:bg-black">
+    <View
+      className="flex-1 bg-white dark:bg-black"
+      style={{ paddingBottom: !!user ? 0 : insets.bottom }}
+    >
       <Suspense
         fallback={
           <View className="flex-1 items-center justify-center">
@@ -32,8 +46,8 @@ export default function HomeScreen() {
         }
       >
         <Feed />
+        {showComposer && !!user && <Composer />}
       </Suspense>
-      <Composer />
     </View>
   );
 }
@@ -99,48 +113,19 @@ function Feed() {
       automaticallyAdjustKeyboardInsets
       automaticallyAdjustsScrollIndicatorInsets
       automaticallyAdjustContentInsets={false}
+      ListHeaderComponentClassName="h-4"
       // contentInset={{ top: headerHeight }}
     />
   );
 }
 
-function Composer() {
-  const [text, setText] = useState("");
-  const ref = useRef<TextInput>(null!);
-  const theme = useTheme();
-  const insets = useSafeAreaInsets();
-
-  const handleSubmit = useCallback(() => {
-    if (text) {
-      setText("");
-      ref.current.clear();
-    }
-  }, [text]);
-
+export function ErrorBoundary({ error, retry }: ErrorBoundaryProps) {
   return (
-    <InputAccessoryView>
-      <View
-        className="bg-white dark:bg-black px-4 relative"
-        style={{
-          borderTopColor: theme.colors.border,
-          borderTopWidth: StyleSheet.hairlineWidth,
-        }}
-      >
-        <TextInput
-          ref={ref}
-          defaultValue={text}
-          onChangeText={setText}
-          className="bg-gray-200 my-2 dark:bg-gray-700 rounded-full px-4 py-2 text-base leading-5"
-          returnKeyType="send"
-          onSubmitEditing={handleSubmit}
-          multiline
-        />
-        {/* fill in area outside safe area */}
-        <View
-          className="absolute top-full left-0 right-0 bg-white dark:bg-black"
-          style={{ height: insets.bottom }}
-        />
-      </View>
-    </InputAccessoryView>
+    <View className="flex-1 bg-white dark:bg-black justify-center gap-2 p-4">
+      <Text className="text-2xl text-center text-black dark:text-white">
+        {error.message}
+      </Text>
+      <Button onPress={retry} title="Try again?" />
+    </View>
   );
 }

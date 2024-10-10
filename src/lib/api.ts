@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { BSKY_PUB_API_URL, MAXPOSTS, SERVER_URL } from "./contstants";
+import { BSKY_PUB_API_URL, MAXPOSTS, SERVER_URL } from "./constants";
 import { PostRecord } from "./types";
 
 export function usePicoPosts() {
@@ -12,12 +12,13 @@ export function usePicoPosts() {
       });
       if (pageParam) searchParams.set("cursor", pageParam);
       const response = await fetch(
-        `https://${SERVER_URL}/posts?${searchParams}`,
+        `${SERVER_URL}/posts?${searchParams}`,
       );
       return (await response.json()) as { cursor: number; posts: PostRecord[] };
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => String(page.cursor),
+    refetchInterval: 5000
   });
 
   return {
