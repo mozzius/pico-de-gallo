@@ -18,7 +18,7 @@ export function usePicoPosts() {
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => String(page.cursor),
-    refetchInterval: 5000
+    refetchInterval: 3000
   });
 
   return {
