@@ -16,8 +16,8 @@ import {
 } from "@tanstack/react-query";
 import { Avatar } from "#/components/Avatar";
 import { AgentProvider, defaultAgent } from "#/lib/agent";
+import { getPDSfromDID } from "#/lib/api";
 import { AuthProvider } from "#/lib/auth";
-import { getPDSfromDID } from "#/lib/pds";
 import { useColorScheme } from "#/lib/useColorScheme";
 import { Stack, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
@@ -88,7 +88,7 @@ export default function RootLayout() {
             handle: identifier,
           })
           .then((res) => getPDSfromDID(res.data.did))
-          .catch(() => undefined)) ?? "https://bsky.social";
+          .catch(() => "https://bsky.social"));
 
       const credentialSession = new CredentialSession(new URL(pdsUrl));
       const agent = new Agent(credentialSession);

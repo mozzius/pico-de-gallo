@@ -11,45 +11,72 @@ export function usePicoPosts() {
         limit: String(MAXPOSTS),
       });
       if (pageParam) searchParams.set("cursor", pageParam);
-      const response = await fetch(
-        `${SERVER_URL}/posts?${searchParams}`,
-      );
+      const response = await fetch(`${SERVER_URL}/posts?${searchParams}`);
       return (await response.json()) as { cursor: number; posts: PostRecord[] };
     },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (page) => String(page.cursor),
-    refetchInterval: 3000
+    refetchInterval: 3000,
   });
 
   return {
     posts: useMemo(() => {
-      return data.pages.toReversed().flatMap((page) => page.posts)
+      return data.pages.toReversed().flatMap((page) => page.posts);
     }, [data]),
     ...rest,
   };
 }
 
-export async function resolveDid(did: string) {
+export async function resolveDidDoc(did: string): Promise<DIDDocument> {
   const res = await fetch(
     did.startsWith("did:web")
-      ? `https://${did.split(":")[2]}/.well-known/did.json`
+      ? `https://${did.slice("did:web:".length)}/.well-known/did.json`
       : "https://plc.directory/" + did,
   );
-
-  return res.json().then((doc) => {
-    for (const alias of doc.alsoKnownAs) {
-      if (alias.includes("at://")) {
-        return alias.split("//")[1];
-      }
-    }
-  });
+  if (!res.ok) throw new Error("Failed to resolve DID");
+  return await res.json();
 }
 
-export async function resolveHandle(handle: string) {
-  const res = await fetch(
-    `https://${BSKY_PUB_API_URL}/xrpc/com.atproto.identity.resolveHandle?handle=` +
-      handle,
-  );
+export async function getPDSfromDID(did: string) {
+  const doc = await resolveDidDoc(did);
+  const service = doc.service?.find((x) => x?.id === "#atproto_pds");
+  if (service) {
+    //entryway
+    if (service.serviceEndpoint.endsWith("bsky.network"))
+      return "https://bsky.social";
+    // custom pds
+    return service.serviceEndpoint;
+  }
+  throw new Error("No PDS service found in DID document");
+}
 
-  return res.json().then((json) => json.did);
+interface DIDDocument {
+  "@context": string[];
+  id: string;
+  alsoKnownAs?: string[];
+  verificationMethod?: VerificationMethod[];
+  service?: Service[];
+}
+
+interface VerificationMethod {
+  id: string;
+  type: string;
+  controller: string;
+  publicKeyMultibase: string;
+}
+
+interface Service {
+  id: string;
+  type: string;
+  serviceEndpoint: string;
+}
+
+export async function resolveDidToHandle(did: string) {
+  const doc = await resolveDidDoc(did);
+  for (const alias of doc?.alsoKnownAs ?? []) {
+    if (alias.includes("at://")) {
+      return alias.split("//")[1];
+    }
+  }
+  throw new Error("No handle found in DID document");
 }
