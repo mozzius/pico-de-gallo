@@ -1,6 +1,6 @@
 import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { BSKY_PUB_API_URL, MAXPOSTS, SERVER_URL } from "./constants";
+import { MAXPOSTS, SERVER_URL } from "./constants";
 import { PostRecord } from "./types";
 
 export function usePicoPosts() {

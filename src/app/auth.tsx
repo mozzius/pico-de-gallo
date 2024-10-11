@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "#/lib/auth";
 import { Stack, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
-import { TextInput } from "react-native";
+import { Button as RNButton, TextInput } from "react-native";
 import { Button, HStack, List, Section, Text } from "swiftui-react-native";
 
 export default function AuthScreen() {
@@ -31,8 +31,8 @@ export default function AuthScreen() {
   });
 
   const headerRight = useCallback(
-    () => <Button title="Done" bold action={router.dismiss} />,
-    [router],
+    () => <RNButton title="Done" disabled={action.isPending} onPress={() => router.dismiss()} />,
+    [router, action.isPending],
   );
 
   return (
