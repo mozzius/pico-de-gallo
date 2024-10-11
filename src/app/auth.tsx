@@ -2,7 +2,7 @@ import { useTheme } from "@react-navigation/native";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "#/lib/auth";
 import { Stack, useRouter } from "expo-router";
-import { act, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { TextInput } from "react-native";
 import { Button, HStack, List, Section, Text } from "swiftui-react-native";
 
