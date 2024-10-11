@@ -7,7 +7,6 @@ import { useAgent } from "#/lib/agent";
 import { useAuth } from "#/lib/auth";
 import { CHARLIMIT } from "#/lib/constants";
 import { SocialPskyFeedPost } from "#/lib/lexicon";
-import { PostRecord } from "#/lib/types";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   InputAccessoryView,
@@ -64,9 +63,10 @@ export function Composer() {
             ref={ref}
             defaultValue={text}
             onChangeText={setText}
-            className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-3xl
-           px-4 py-2 text-base leading-5"
-            placeholderClassName="text-gray-600 dark:text-gray-400"
+            className="flex-1 bg-gray-100 dark:bg-gray-900 rounded-3xl
+           px-4 py-2 text-lgh leading-5"
+            style={{ color: theme.colors.text }}
+            placeholderClassName="text-gray-500"
             onSubmitEditing={handleSubmit}
             placeholder="Something to say?"
             multiline

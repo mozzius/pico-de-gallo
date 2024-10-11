@@ -2,12 +2,18 @@ import "react-native-reanimated";
 import "#/lib/polyfill";
 import "#/global.css";
 import { Agent, AtpSessionData, CredentialSession } from "@atproto/api";
+import NetInfo from "@react-native-community/netinfo";
 import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
 } from "@react-navigation/native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  focusManager,
+  onlineManager,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { Avatar } from "#/components/Avatar";
 import { AgentProvider, defaultAgent } from "#/lib/agent";
 import { AuthProvider } from "#/lib/auth";
@@ -17,12 +23,18 @@ import { Stack, useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import * as SplashScreen from "expo-splash-screen";
 import { useCallback, useEffect, useState } from "react";
-import { Button, PlatformColor } from "react-native";
+import { AppState, Button, Platform, PlatformColor } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
+
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
+    setOnline(!!state.isConnected);
+  });
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -110,6 +122,13 @@ export default function RootLayout() {
     SecureStore.deleteItemAsync("session");
   }, []);
 
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (status) =>
+      focusManager.setFocused(status === "active"),
+    );
+    return () => subscription.remove();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -147,6 +166,7 @@ export default function RootLayout() {
                   title: "Log in",
                   presentation: "formSheet",
                   headerLargeTitle: true,
+                  // statusBarStyle: "light",
                 }}
               />
               <Stack.Screen name="+not-found" />

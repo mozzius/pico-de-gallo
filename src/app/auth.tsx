@@ -1,24 +1,17 @@
+import { useTheme } from "@react-navigation/native";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "#/lib/auth";
 import { Stack, useRouter } from "expo-router";
 import { act, useCallback, useState } from "react";
 import { TextInput } from "react-native";
-import {
-  Button,
-  HStack,
-  List,
-  Section,
-  SecureField,
-  Text,
-  TextField,
-  useBinding,
-} from "swiftui-react-native";
+import { Button, HStack, List, Section, Text } from "swiftui-react-native";
 
 export default function AuthScreen() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
   const { logIn } = useAuth();
+  const theme = useTheme();
 
   const action = useMutation({
     mutationFn: async () => {
@@ -45,9 +38,9 @@ export default function AuthScreen() {
   return (
     <>
       <Stack.Screen options={{ headerRight }} />
-      <List>
+      <List style={{ flex: 1 }}>
         <Section
-          header="Username & password"
+          header="Bluesky username & password"
           footer={action.error ? action.error.message : undefined}
         >
           <TextInput
@@ -58,6 +51,7 @@ export default function AuthScreen() {
             autoCorrect={false}
             textContentType="username"
             className="flex-1 text-lg leading-5"
+            style={{ color: theme.colors.text }}
           />
           <TextInput
             defaultValue={password}
@@ -65,6 +59,7 @@ export default function AuthScreen() {
             placeholder="Password"
             secureTextEntry
             className="flex-1 text-lg leading-5"
+            style={{ color: theme.colors.text }}
           />
         </Section>
         <Button
